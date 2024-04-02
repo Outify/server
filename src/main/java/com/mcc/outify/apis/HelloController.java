@@ -10,4 +10,9 @@ public class HelloController {
     String Hello() {
         return "Hello, world! This is Outify from MCC";
     }
+
+    @GetMapping("/healthcheck")
+    public String healthcheck() {
+        return "OK";
+    }
 }
