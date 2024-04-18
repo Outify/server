@@ -1,8 +1,6 @@
-package com.mcc.outify.weatherData;
+package com.mcc.outify.weathers;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -13,23 +11,24 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 @Component
-public class Windy implements ApplicationRunner {
+public class Windy {
 
     @Value("${windy-key}")
     private String windyKey;
 
-    @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run() throws Exception {
 
         String requestBody =
                 "{\"lat\": 49.809," +
-                "\"lon\": 16.787," +
-                "\"model\": \"gfs\"," +
-                "\"parameters\": [\"temp\", \"precip\", \"wind\", \"windGust\"]," +
-                "\"levels\": [\"surface\"]," +
-                "\"key\":\"" + windyKey + "\"}";
+                        "\"lon\": 16.787," +
+                        "\"model\": \"gfs\"," +
+                        "\"parameters\": [\"temp\", \"dewpoint\", \"precip\", \"convPrecip\", \"snowPrecip\"," +
+                        "\"wind\", \"windGust\", \"cape\", \"ptype\", \"lclouds\", \"mclouds\", \"hclouds\", " +
+                        "\"rh\", \"gh\", \"pressure\"]," +
+                        "\"levels\": [\"surface\"]," +
+                        "\"key\":\"" + windyKey + "\"}";
 
-        StringBuilder urlBuilder = new StringBuilder("https://api.windy.com/api/point-forecast/v2"); /*URL*/
+        StringBuilder urlBuilder = new StringBuilder("https://api.windy.com/api/point-forecast/v2");
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("POST");
@@ -55,6 +54,6 @@ public class Windy implements ApplicationRunner {
         }
         rd.close();
         conn.disconnect();
-        System.out.println(sb.toString());
+        System.out.println(sb);
     }
 }
