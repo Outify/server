@@ -1,6 +1,7 @@
 package com.mcc.outify.weathers;
 
 import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -29,10 +30,10 @@ public class LocationList {
                 XSSFRow row = sheet.getRow(rowindex);
                 if (row != null) {
                     String highAddr = row.getCell(0).getStringCellValue();
-                    String midAddr = row.getCell(1).getStringCellValue();
-                    String lowAddr = row.getCell(2).getStringCellValue();
-                    String longitude = row.getCell(3).getStringCellValue();
-                    String latitude = row.getCell(4).getStringCellValue();
+                    String midAddr = isNullCheck(row, 1);
+                    String lowAddr = isNullCheck(row, 2);
+                    Double longitude = row.getCell(3).getNumericCellValue();
+                    Double latitude = row.getCell(4).getNumericCellValue();
 
                     LocationEntity locationData = new LocationEntity(highAddr, midAddr, lowAddr, longitude, latitude);
                     locationList.add(locationData);
@@ -44,6 +45,15 @@ public class LocationList {
             e.printStackTrace();
         }
         return locationList;
+    }
+
+    private static String isNullCheck(XSSFRow row, int cellnum) {
+        String addr = " ";
+        XSSFCell midAddrCell = row.getCell(cellnum);
+        if (midAddrCell != null) {
+            addr = midAddrCell.getStringCellValue();
+        }
+        return addr;
     }
 
 }
