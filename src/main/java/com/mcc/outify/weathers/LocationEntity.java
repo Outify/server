@@ -24,10 +24,10 @@ public class LocationEntity {
     private static Category category;
 
     @Column(nullable = false)
-    private Double longitude;
+    private String longitude;
 
     @Column(nullable = false)
-    private Double latitude;
+    private String latitude;
 
     @Column(nullable = false)
     private String highAdress;
@@ -37,5 +37,13 @@ public class LocationEntity {
 
     @Column(nullable = false)
     private String lowAdress;
+
+    public LocationEntity(String highAddr, String midAddr, String lowAddr, String longitude, String latitude) {
+        this.highAdress = highAddr;
+        this.midAdress = midAddr;
+        this.lowAdress = lowAddr;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
 
 }
