@@ -1,4 +1,4 @@
-package com.mcc.outify.weathers;
+package com.mcc.outify.weathers.weatherApiImpl;
 
 import java.io.IOException;
 
