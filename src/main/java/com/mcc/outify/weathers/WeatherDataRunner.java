@@ -16,7 +16,6 @@ public class WeatherDataRunner implements ApplicationRunner {
 
     private final OpenMeteoAPI openMeteo;
     private final YrAPI yr;
-    String filePath = "/Users/girin/Desktop/03_Develop/06_MCC/outify/src/main/resources/data/locations.xlsx";
 
     @Override
     public void run(ApplicationArguments args) {
@@ -29,10 +28,13 @@ public class WeatherDataRunner implements ApplicationRunner {
     }
 
     private void excuteWeatherOpenAPIs() {
+        String filePath = "src/main/resources/data/locations.xlsx";
         List<LocationEntity> locationList = LocationList.readExcel(filePath);
+
         for (int i = 0; i < locationList.size(); i++) {
             String latitude = locationList.get(i).getLatitude();
             String longitude = locationList.get(i).getLongitude();
+
             getOpenMeteoData(latitude, longitude);
             getYrData(latitude, longitude);
         }
