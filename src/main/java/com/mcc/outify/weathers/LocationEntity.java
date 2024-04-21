@@ -38,12 +38,12 @@ public class LocationEntity {
     @Column(nullable = false)
     private String lowAdress;
 
-    public LocationEntity(String highAddr, String midAddr, String lowAddr, String longitude, String latitude) {
+    public LocationEntity(String highAddr, String midAddr, String lowAddr, Double longitude, Double latitude) {
         this.highAdress = highAddr;
         this.midAdress = midAddr;
         this.lowAdress = lowAddr;
-        this.longitude = longitude;
-        this.latitude = latitude;
+        this.longitude = String.valueOf(longitude);
+        this.latitude = String.valueOf(latitude);
     }
 
 }
