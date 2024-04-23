@@ -1,4 +1,4 @@
-package com.mcc.outify.weathers;
+package com.mcc.outify.weathers.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,17 +12,15 @@ import lombok.NoArgsConstructor;
 @Table(name = "locations")
 public class LocationEntity {
 
-    enum Category {
-        DISTRICT, MOUNTAIN
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long locationId;
 
     @Column(nullable = false)
-    private static Category category;
+    private Category category;
 
+    @Column(nullable = false)
+    private String name;
     @Column(nullable = false)
     private String longitude;
 
@@ -38,12 +36,29 @@ public class LocationEntity {
     @Column(nullable = false)
     private String lowAdress;
 
-    public LocationEntity(String highAddr, String midAddr, String lowAddr, Double longitude, Double latitude) {
+    public LocationEntity(String category, String name, String highAddr, String midAddr, String lowAddr, Double longitude, Double latitude) {
+        this.category = Category.fromString(category);
+        this.name = name;
         this.highAdress = highAddr;
         this.midAdress = midAddr;
         this.lowAdress = lowAddr;
         this.longitude = String.valueOf(longitude);
         this.latitude = String.valueOf(latitude);
+    }
+
+    enum Category {
+        DISTRICT, MOUNTAIN;
+
+        private static Category fromString(String inputStr) {
+            if (inputStr != null) {
+                for (Category category : Category.values()) {
+                    if (inputStr.equalsIgnoreCase(category.name())) {
+                        return category;
+                    }
+                }
+            }
+            throw new IllegalArgumentException("Invalid category: " + inputStr);
+        }
     }
 
 }

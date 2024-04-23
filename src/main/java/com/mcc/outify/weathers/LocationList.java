@@ -1,19 +1,28 @@
 package com.mcc.outify.weathers;
 
+import com.mcc.outify.weathers.entity.LocationEntity;
+import com.mcc.outify.weathers.repository.LocationRepository;
+import lombok.RequiredArgsConstructor;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
 
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
+@RequiredArgsConstructor
+@Component
 public class LocationList {
 
-    public static List<LocationEntity> readExcel(String filePath) {
-        List<LocationEntity> locationList = new ArrayList<>();
+    private final LocationRepository locationRepository;
+
+    public void readExcel() {
+
+        String filePath = "src/main/resources/data/locations.xlsx";
+
         try {
             FileInputStream file = new FileInputStream(filePath);
             ZipSecureFile.setMinInflateRatio(0);
@@ -22,21 +31,22 @@ public class LocationList {
             XSSFSheet sheet = workbook.getSheetAt(0);
             int rows = sheet.getPhysicalNumberOfRows();
 
-            XSSFRow firstRow = sheet.getRow(0);
-
-            int cells = firstRow.getPhysicalNumberOfCells();
-
             for (int rowindex = 1; rowindex < rows; rowindex++) {
                 XSSFRow row = sheet.getRow(rowindex);
                 if (row != null) {
-                    String highAddr = row.getCell(0).getStringCellValue();
-                    String midAddr = isNullCheck(row, 1);
-                    String lowAddr = isNullCheck(row, 2);
-                    Double longitude = row.getCell(3).getNumericCellValue();
-                    Double latitude = row.getCell(4).getNumericCellValue();
+                    String category = row.getCell(0).getStringCellValue();
+                    String name = row.getCell(1).getStringCellValue();
+                    String highAddr = row.getCell(2).getStringCellValue();
+                    String midAddr = isNullCheck(row, 3);
+                    String lowAddr = isNullCheck(row, 4);
+                    Double longitude = row.getCell(5).getNumericCellValue();
+                    Double latitude = row.getCell(6).getNumericCellValue();
 
-                    LocationEntity locationData = new LocationEntity(highAddr, midAddr, lowAddr, longitude, latitude);
-                    locationList.add(locationData);
+                    Optional<LocationEntity> isExistLocation = locationRepository.findByName(name);
+                    if (isExistLocation.isEmpty()) {
+                        LocationEntity newLocation = new LocationEntity(category, name, highAddr, midAddr, lowAddr, longitude, latitude);
+                        locationRepository.save(newLocation);
+                    }
                 }
             }
             workbook.close();
@@ -44,7 +54,6 @@ public class LocationList {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return locationList;
     }
 
     private static String isNullCheck(XSSFRow row, int cellnum) {
