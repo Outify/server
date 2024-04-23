@@ -1,4 +1,4 @@
-package com.mcc.outify.weathers;
+package com.mcc.outify.weathers.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,15 +12,19 @@ import lombok.NoArgsConstructor;
 @Table(name = "weathersources")
 public class WeatherSourceEntity {
 
-    enum WeatherSource {
-        METEO, YR
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long weatherSourceId;
 
     @Column(nullable = false)
     private WeatherSource source;
+
+    public WeatherSourceEntity(WeatherSource source) {
+        this.source = source;
+    }
+
+    public enum WeatherSource {
+        METEO, YR;
+    }
 
 }
