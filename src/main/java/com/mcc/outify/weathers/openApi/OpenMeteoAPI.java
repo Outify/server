@@ -1,11 +1,11 @@
 package com.mcc.outify.weathers.openApi;
 
-import com.mcc.outify.weathers.WeatherPolicy;
 import com.mcc.outify.weathers.entity.LocationEntity;
 import com.mcc.outify.weathers.entity.WeatherDataEntity;
 import com.mcc.outify.weathers.entity.WeatherSourceEntity;
 import com.mcc.outify.weathers.repository.LocationRepository;
 import com.mcc.outify.weathers.repository.WeatherDataRepository;
+import com.mcc.outify.weathers.repository.WeatherSourceRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -28,10 +28,9 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class OpenMeteoAPI implements WeatherAPI {
-
     private final LocationRepository locationRepository;
     private final WeatherDataRepository weatherDataRepository;
-    private final WeatherPolicy weatherPolicy;
+    private final WeatherSourceRepository weatherSourceRepository;
 
     String option = "temperature_2m,relative_humidity_2m,dew_point_2m,precipitation,rain,weather_code,cloud_cover,wind_speed_10m,wind_gusts_10m";
     String timezone = "Asia/Seoul";
@@ -41,12 +40,12 @@ public class OpenMeteoAPI implements WeatherAPI {
     @Override
     public void getWeatherData() throws IOException, ParseException {
 
-        WeatherSourceEntity weatherSource = weatherPolicy.isExistSourceCheck("METEO");
+        WeatherSourceEntity weatherSource = weatherSourceRepository.findBySource(WeatherSourceEntity.WeatherSource.METEO);
         List<LocationEntity> locationList = locationRepository.findAll();
 
         for (LocationEntity location : locationList) {
 
-            weatherDataRepository.deleteAllByLocation(location);
+            weatherDataRepository.deleteByLocationAndWeatherSource(location, weatherSource);
 
             String latitude = location.getLatitude();
             String longitude = location.getLongitude();

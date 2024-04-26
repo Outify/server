@@ -1,11 +1,11 @@
 package com.mcc.outify.weathers.openApi;
 
-import com.mcc.outify.weathers.WeatherPolicy;
 import com.mcc.outify.weathers.entity.LocationEntity;
 import com.mcc.outify.weathers.entity.WeatherDataEntity;
 import com.mcc.outify.weathers.entity.WeatherSourceEntity;
 import com.mcc.outify.weathers.repository.LocationRepository;
 import com.mcc.outify.weathers.repository.WeatherDataRepository;
+import com.mcc.outify.weathers.repository.WeatherSourceRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -32,7 +32,7 @@ public class YrAPI implements WeatherAPI {
 
     private final LocationRepository locationRepository;
     private final WeatherDataRepository weatherDataRepository;
-    private final WeatherPolicy weatherPolicy;
+    private final WeatherSourceRepository weatherSourceRepository;
 
     @Value("${yr-user-agent}")
     private String yrUserAgent;
@@ -41,11 +41,12 @@ public class YrAPI implements WeatherAPI {
     @Override
     public void getWeatherData() throws IOException, ParseException {
 
-        WeatherSourceEntity weatherSource = weatherPolicy.isExistSourceCheck("YR");
+        WeatherSourceEntity weatherSource = weatherSourceRepository.findBySource(WeatherSourceEntity.WeatherSource.YR);
         List<LocationEntity> locationList = locationRepository.findAll();
 
         for (LocationEntity location : locationList) {
-            weatherDataRepository.deleteAllByLocation(location);
+
+            weatherDataRepository.deleteByLocationAndWeatherSource(location, weatherSource);
 
             String latitude = location.getLatitude();
             String longitude = location.getLongitude();
@@ -78,25 +79,30 @@ public class YrAPI implements WeatherAPI {
             JSONArray parse_timeseries = (JSONArray) parse_properties.get("timeseries");
             for (int i = 0; i < parse_timeseries.size() - 1; i++) {
                 JSONObject parsed_obj = (JSONObject) parse_timeseries.get(i);
+
                 String parsedTime = (String) parsed_obj.get("time");
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm").withZone(ZoneId.of("Asia/Seoul"));
-                LocalDateTime time = LocalDateTime.parse(parsedTime, formatter);
+                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
+                LocalDateTime transformedTime = LocalDateTime.parse(parsedTime, inputFormatter);
+                DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm").withZone(ZoneId.of("Asia/Seoul"));
+                LocalDateTime time = LocalDateTime.parse(transformedTime.format(outputFormatter), outputFormatter);
 
                 JSONObject parse_data = (JSONObject) parsed_obj.get("data");
                 JSONObject parse_instant = (JSONObject) parse_data.get("instant");
                 JSONObject parse_details = (JSONObject) parse_instant.get("details");
-                Double tmp = ((Number) parse_details.get("air_temperature")).doubleValue();
-                Double wsd = ((Number) parse_details.get("wind_speed")).doubleValue();
-                Double wgu = ((Number) parse_details.get("wind_speed_of_gust")).doubleValue();
-                Double hum = ((Number) parse_details.get("relative_humidity")).doubleValue();
-                Double dpt = ((Number) parse_details.get("dew_point_temperature")).doubleValue();
 
-                JSONObject parse_nextHours = (JSONObject) parsed_obj.get("next_1_hours");
+                Double tmp = (Double) parse_details.get("air_temperature");
+                Double wsd = (Double) parse_details.get("wind_speed");
+                Double wgu = (Double) parse_details.get("wind_speed_of_gust");
+                Double hum = (Double) parse_details.get("relative_humidity");
+                Double dpt = (Double) parse_details.get("dew_point_temperature");
+
+                JSONObject parse_nextHours = (JSONObject) parse_data.get("next_1_hours");
+                if (parse_nextHours == null) parse_nextHours = (JSONObject) parse_data.get("next_6_hours");
                 JSONObject parse_summary = (JSONObject) parse_nextHours.get("summary");
                 String sky = (String) parse_summary.get("symbol_code");
 
                 JSONObject parse_hourDetails = (JSONObject) parse_nextHours.get("details");
-                Double pcp = ((Number) parse_hourDetails.get("precipitation_amount")).doubleValue();
+                Double pcp = (Double) parse_hourDetails.get("precipitation_amount");
 
                 WeatherDataEntity weatherData = new WeatherDataEntity(location, weatherSource, time, sky, tmp, pcp, wsd, wgu, hum, dpt);
                 weatherDataRepository.save(weatherData);
