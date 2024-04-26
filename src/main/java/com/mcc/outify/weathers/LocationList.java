@@ -58,9 +58,9 @@ public class LocationList {
 
     private static String isNullCheck(XSSFRow row, int cellnum) {
         String addr = " ";
-        XSSFCell midAddrCell = row.getCell(cellnum);
-        if (midAddrCell != null) {
-            addr = midAddrCell.getStringCellValue();
+        XSSFCell cell = row.getCell(cellnum);
+        if (cell != null) {
+            addr = cell.getStringCellValue();
         }
         return addr;
     }

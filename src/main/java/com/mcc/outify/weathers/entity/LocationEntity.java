@@ -17,6 +17,7 @@ public class LocationEntity {
     private Long locationId;
 
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private Category category;
 
     @Column(nullable = false)
@@ -28,20 +29,20 @@ public class LocationEntity {
     private String latitude;
 
     @Column(nullable = false)
-    private String highAdress;
+    private String highAddr;
 
     @Column(nullable = false)
-    private String midAdress;
+    private String midAddr;
 
     @Column(nullable = false)
-    private String lowAdress;
+    private String lowAddr;
 
     public LocationEntity(String category, String name, String highAddr, String midAddr, String lowAddr, Double longitude, Double latitude) {
         this.category = Category.fromString(category);
         this.name = name;
-        this.highAdress = highAddr;
-        this.midAdress = midAddr;
-        this.lowAdress = lowAddr;
+        this.highAddr = highAddr;
+        this.midAddr = midAddr;
+        this.lowAddr = lowAddr;
         this.longitude = String.valueOf(longitude);
         this.latitude = String.valueOf(latitude);
     }
@@ -52,7 +53,7 @@ public class LocationEntity {
         private static Category fromString(String inputStr) {
             if (inputStr != null) {
                 for (Category category : Category.values()) {
-                    if (inputStr.equalsIgnoreCase(category.name())) {
+                    if (category.name().equalsIgnoreCase(inputStr)) {
                         return category;
                     }
                 }

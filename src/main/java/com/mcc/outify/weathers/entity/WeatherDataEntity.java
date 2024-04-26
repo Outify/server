@@ -20,7 +20,7 @@ public class WeatherDataEntity {
 
     @ManyToOne
     @JoinColumn(name = "locationId")
-    private LocationEntity locaion;
+    private LocationEntity location;
 
     @ManyToOne
     @JoinColumn(name = "weatherSourceId")
@@ -50,8 +50,8 @@ public class WeatherDataEntity {
     @Column
     private Double dpt;
 
-    public WeatherDataEntity(LocationEntity locaion, WeatherSourceEntity weatherSource, LocalDateTime time, String sky, Double tmp, Double pcp, Double wsd, Double wgu, Double hum, Double dpt) {
-        this.locaion = locaion;
+    public WeatherDataEntity(LocationEntity location, WeatherSourceEntity weatherSource, LocalDateTime time, String sky, Double tmp, Double pcp, Double wsd, Double wgu, Double hum, Double dpt) {
+        this.location = location;
         this.weatherSource = weatherSource;
         this.time = time;
         this.sky = sky;
@@ -63,4 +63,16 @@ public class WeatherDataEntity {
         this.dpt = dpt;
     }
 
+    public WeatherDataEntity(WeatherDataEntity weatherData, LocalDateTime previousTime) {
+        this.location = weatherData.getLocation();
+        this.weatherSource = weatherData.getWeatherSource();
+        this.time = previousTime;
+        this.sky = weatherData.getSky();
+        this.tmp = weatherData.getTmp();
+        this.pcp = weatherData.getPcp();
+        this.wsd = weatherData.getWsd();
+        this.wgu = weatherData.getWgu();
+        this.hum = weatherData.getHum();
+        this.dpt = weatherData.getDpt();
+    }
 }
