@@ -39,7 +39,7 @@ public class LocationEntity {
 
     public LocationEntity(String category, String name, String highAddr, String midAddr, String lowAddr, Double longitude, Double latitude) {
         this.category = Category.fromString(category);
-        this.name = name;
+        this.name = name.trim();
         this.highAddr = highAddr;
         this.midAddr = midAddr;
         this.lowAddr = lowAddr;
