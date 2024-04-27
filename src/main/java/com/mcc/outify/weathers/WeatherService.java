@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RequiredArgsConstructor
 @Service
@@ -23,31 +20,22 @@ public class WeatherService {
     private final WeatherDataRepository weatherDataRepository;
     private final WeatherSourceRepository weatherSourceRepository;
 
-    public Map<WeatherSourceEntity.WeatherSource, List<WeatherDataEntity>> getLocationWeather(String addr) {
-        Map<WeatherSourceEntity.WeatherSource, List<WeatherDataEntity>> weatherDatas = new HashMap<>();
+    public Map<String, Object> getLocationWeather(String addr) {
+        Map<String, Object> resData = new LinkedHashMap<>();
 
-        String[] addrArr = addr.split(" ");
-        String highAddr = addrArr[0];
-        String midAddr = addrArr[1];
-        String lowAddr = addrArr[2];
+        StringTokenizer st = new StringTokenizer(addr);
+        String highAddr = st.nextToken();
+        String midAddr = st.nextToken();
+        String lowAddr = st.nextToken();
 
-        LocationEntity location = locationRepository.findByHighAddrAndMidAddrAndLowAddr(highAddr, midAddr, lowAddr);
-        if (location == null) {
-            location = locationRepository.findByHighAddrAndMidAddr(highAddr, midAddr);
-            if (location == null) {
-                location = locationRepository.findByHighAddr(highAddr);
-                if(location == null) {
-                    throw new IllegalArgumentException("위치 및 주소 정보를 확인할 수 없습니다.");
-                }
-            }
-        }
+        LocationEntity location = findLocation(highAddr, midAddr, lowAddr);
+        resData.put("location", location);
 
+        LocalDateTime now = LocalDateTime.now();
         List<WeatherSourceEntity> weatherSourceList = weatherSourceRepository.findAll();
         for (WeatherSourceEntity weatherSource : weatherSourceList) {
             List<WeatherDataEntity> weatherDataList = weatherDataRepository.findAllByLocationAndWeatherSource(location, weatherSource);
-
-            List<WeatherDataEntity> validWeatherDataList = new ArrayList<>();
-            LocalDateTime now = LocalDateTime.now();
+            List<WeatherResponseDto> validWeatherDataList = new ArrayList<>();
 
             for (int i = 0; i < weatherDataList.size() - 1; i++) {
                 WeatherDataEntity weatherData = weatherDataList.get(i);
@@ -55,21 +43,40 @@ public class WeatherService {
                 LocalDateTime time = weatherData.getTime();
                 LocalDateTime nextTime = nextWeatherData.getTime();
 
-                if (!time.isBefore(now) && nextTime.minusHours(1).isEqual(time) && time.getHour() % 3 == 0) {
-                    validWeatherDataList.add(weatherData);
-                } else if (!time.isBefore(now) && nextTime.minusHours(6).isEqual(time)) {
-                    for (int j = 5; j >= 0; j--) {
-                        LocalDateTime previousTime = time.minusHours(j);
-                        if (previousTime.getHour() % 3 == 0) {
-                            WeatherDataEntity validWeatherData = new WeatherDataEntity(weatherData, previousTime);
-                            validWeatherDataList.add(validWeatherData);
+                if (!time.isBefore(now)) {
+                    if (nextTime.minusHours(1).isEqual(time) && time.getHour() % 3 == 0) {
+                        WeatherResponseDto responseDto = new WeatherResponseDto(weatherData, time);
+                        validWeatherDataList.add(responseDto);
+                    } else if (nextTime.minusHours(6).isEqual(time)) {
+                        for (int j = 5; j >= 0; j--) {
+                            LocalDateTime previousTime = time.minusHours(j);
+                            if (previousTime.getHour() % 3 == 0) {
+                                WeatherResponseDto responseDto = new WeatherResponseDto(weatherData, previousTime);
+                                validWeatherDataList.add(responseDto);
+                            }
                         }
                     }
                 }
+
             }
-            weatherDatas.put(weatherSource.getSource(), validWeatherDataList);
+            resData.put(weatherSource.getSource().name(), validWeatherDataList);
         }
-        return weatherDatas;
+        return resData;
+    }
+
+    private LocationEntity findLocation(String highAddr, String midAddr, String lowAddr) {
+
+        LocationEntity location = locationRepository.findByHighAddrAndMidAddrAndLowAddr(highAddr, midAddr, lowAddr);
+        if (location == null) {
+            location = locationRepository.findByHighAddrAndMidAddrAndLowAddr(highAddr, midAddr, "");
+            if (location == null) {
+                location = locationRepository.findByHighAddrAndMidAddrAndLowAddr(highAddr, "", "");
+                if (location == null) {
+                    throw new IllegalArgumentException("위치 및 주소 정보를 확인할 수 없습니다.");
+                }
+            }
+        }
+        return location;
     }
 
 }
