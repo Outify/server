@@ -93,20 +93,18 @@ public class OpenMeteoAPI implements WeatherAPI {
                 String parsedTime = (String) parse_time.get(t);
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm").withZone(ZoneId.of("Asia/Seoul"));
                 LocalDateTime time = LocalDateTime.parse(parsedTime, formatter);
-                if (t % 3 == 0) {
-                    Long temp_sky = ((Number) weather_code.get(t)).longValue();
-                    String sky = String.valueOf(temp_sky);
-                    Double tmp = ((Number) temperature_2m.get(t)).doubleValue();
-                    Double pcp = ((Number) precipitation.get(t)).doubleValue();
-                    Double wsd = ((Number) wind_speed_10m.get(t)).doubleValue();
-                    Double wgu = ((Number) wind_gusts_10m.get(t)).doubleValue();
-                    Long temp_hum = ((Number) relative_humidity_2m.get(t)).longValue();
-                    Double hum = Double.valueOf(temp_hum);
-                    Double dpt = ((Number) dew_point_2m.get(t)).doubleValue();
+                Long temp_sky = ((Number) weather_code.get(t)).longValue();
+                String sky = String.valueOf(temp_sky);
+                Double tmp = ((Number) temperature_2m.get(t)).doubleValue();
+                Double pcp = ((Number) precipitation.get(t)).doubleValue();
+                Double wsd = ((Number) wind_speed_10m.get(t)).doubleValue();
+                Double wgu = ((Number) wind_gusts_10m.get(t)).doubleValue();
+                Long temp_hum = ((Number) relative_humidity_2m.get(t)).longValue();
+                Double hum = Double.valueOf(temp_hum);
+                Double dpt = ((Number) dew_point_2m.get(t)).doubleValue();
 
-                    WeatherDataEntity weatherData = new WeatherDataEntity(location, weatherSource, time, sky, tmp, pcp, wsd, wgu, hum, dpt);
-                    weatherDataRepository.save(weatherData);
-                }
+                WeatherDataEntity weatherData = new WeatherDataEntity(location, weatherSource, time, sky, tmp, pcp, wsd, wgu, hum, dpt);
+                weatherDataRepository.save(weatherData);
             }
         }
     }
