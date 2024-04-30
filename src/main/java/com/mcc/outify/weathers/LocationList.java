@@ -8,9 +8,11 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
-import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -18,13 +20,16 @@ import java.util.Optional;
 public class LocationList {
 
     private final LocationRepository locationRepository;
+    private final ResourceLoader resourceLoader;
 
     public void readExcel() {
 
-        String filePath = "src/main/resources/data/locations.xlsx";
+        String filePath = "classpath:data/test.xlsx";
+
 
         try {
-            FileInputStream file = new FileInputStream(filePath);
+            Resource resource = resourceLoader.getResource(filePath);
+            InputStream file = resource.getInputStream();
             ZipSecureFile.setMinInflateRatio(0);
             XSSFWorkbook workbook = new XSSFWorkbook(file);
 
