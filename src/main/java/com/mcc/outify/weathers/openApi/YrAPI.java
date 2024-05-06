@@ -34,7 +34,7 @@ public class YrAPI implements WeatherAPI {
     private final WeatherDataRepository weatherDataRepository;
     private final WeatherSourceRepository weatherSourceRepository;
 
-    @Value("${yr-user-agent}")
+    @Value("${yr.user.agent}")
     private String yrUserAgent;
 
     @Transactional
