@@ -8,4 +8,5 @@ public class WeatherRequestDto {
 
     @NotBlank
     private String addr;
+
 }

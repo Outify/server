@@ -75,4 +75,5 @@ public class WeatherDataEntity {
         this.hum = weatherData.getHum();
         this.dpt = weatherData.getDpt();
     }
+
 }

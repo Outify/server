@@ -26,7 +26,6 @@ public class LocationList {
 
         String filePath = "classpath:data/test.xlsx";
 
-
         try {
             Resource resource = resourceLoader.getResource(filePath);
             InputStream file = resource.getInputStream();

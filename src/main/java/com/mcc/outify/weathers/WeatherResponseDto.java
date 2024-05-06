@@ -34,4 +34,5 @@ public class WeatherResponseDto {
         this. hum = weatherData.getHum();
         this.dpt = weatherData.getDpt();
     }
+
 }
