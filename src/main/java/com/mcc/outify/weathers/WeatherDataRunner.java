@@ -3,7 +3,6 @@ package com.mcc.outify.weathers;
 import com.mcc.outify.weathers.entity.WeatherSourceEntity;
 import com.mcc.outify.weathers.openApi.OpenMeteoAPI;
 import com.mcc.outify.weathers.openApi.YrAPI;
-import com.mcc.outify.weathers.repository.WeatherDataRepository;
 import com.mcc.outify.weathers.repository.WeatherSourceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
@@ -23,7 +22,6 @@ public class WeatherDataRunner implements ApplicationRunner {
     private final YrAPI yr;
     private final LocationList locationList;
     private final WeatherSourceRepository weatherSourceRepository;
-    private final WeatherDataRepository weatherDataRepository;
 
     @Override
     public void run(ApplicationArguments args) {
@@ -32,8 +30,8 @@ public class WeatherDataRunner implements ApplicationRunner {
     }
 
     private void executeAfterDelay() {
-        locationList.readExcel();
-        saveSource();
+//        locationList.readExcel();
+//        saveSource();
         executeWeatherOpenAPIs();
     }
 

@@ -1,5 +1,6 @@
 package com.mcc.outify.weathers;
 
+import com.mcc.outify.weathers.dto.WeatherResponseDto;
 import com.mcc.outify.weathers.entity.LocationEntity;
 import com.mcc.outify.weathers.entity.WeatherDataEntity;
 import com.mcc.outify.weathers.entity.WeatherSourceEntity;

@@ -34,7 +34,7 @@ public class YrAPI implements WeatherAPI {
     private final WeatherDataRepository weatherDataRepository;
     private final WeatherSourceRepository weatherSourceRepository;
 
-    @Value("${yr-user-agent}")
+    @Value("${yr.user.agent}")
     private String yrUserAgent;
 
     @Transactional
@@ -44,7 +44,9 @@ public class YrAPI implements WeatherAPI {
         WeatherSourceEntity weatherSource = weatherSourceRepository.findBySource(WeatherSourceEntity.WeatherSource.YR);
         List<LocationEntity> locationList = locationRepository.findAll();
 
-        for (LocationEntity location : locationList) {
+//        for (LocationEntity location : locationList) {
+        for (int loc = 0; loc < 4; loc++) {
+            LocationEntity location = locationList.get(loc);
 
             weatherDataRepository.deleteByLocationAndWeatherSource(location, weatherSource);
 
@@ -109,4 +111,5 @@ public class YrAPI implements WeatherAPI {
             }
         }
     }
+
 }

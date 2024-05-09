@@ -1,4 +1,4 @@
-package com.mcc.outify.weathers;
+package com.mcc.outify.weathers.dto;
 
 import com.mcc.outify.weathers.entity.WeatherDataEntity;
 import lombok.Getter;
@@ -34,4 +34,5 @@ public class WeatherResponseDto {
         this. hum = weatherData.getHum();
         this.dpt = weatherData.getDpt();
     }
+
 }
