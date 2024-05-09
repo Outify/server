@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "weathersources")
+@Table(name = "weathersource")
 public class WeatherSourceEntity {
 
     @Id

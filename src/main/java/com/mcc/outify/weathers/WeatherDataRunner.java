@@ -30,8 +30,8 @@ public class WeatherDataRunner implements ApplicationRunner {
     }
 
     private void executeAfterDelay() {
-        locationList.readExcel();
-        saveSource();
+//        locationList.readExcel();
+//        saveSource();
         executeWeatherOpenAPIs();
     }
 

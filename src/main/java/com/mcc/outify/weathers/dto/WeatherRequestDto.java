@@ -1,4 +1,4 @@
-package com.mcc.outify.weathers;
+package com.mcc.outify.weathers.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;

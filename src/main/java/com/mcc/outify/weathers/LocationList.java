@@ -24,7 +24,7 @@ public class LocationList {
 
     public void readExcel() {
 
-        String filePath = "classpath:data/test.xlsx";
+        String filePath = "classpath:data/locations.xlsx";
 
         try {
             Resource resource = resourceLoader.getResource(filePath);
