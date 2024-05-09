@@ -44,7 +44,9 @@ public class YrAPI implements WeatherAPI {
         WeatherSourceEntity weatherSource = weatherSourceRepository.findBySource(WeatherSourceEntity.WeatherSource.YR);
         List<LocationEntity> locationList = locationRepository.findAll();
 
-        for (LocationEntity location : locationList) {
+//        for (LocationEntity location : locationList) {
+        for (int loc = 0; loc < 4; loc++) {
+            LocationEntity location = locationList.get(loc);
 
             weatherDataRepository.deleteByLocationAndWeatherSource(location, weatherSource);
 
