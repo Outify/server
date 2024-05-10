@@ -1,6 +1,6 @@
 package com.mcc.outify.users.repository;
 
-import com.mcc.outify.users.CertificationEntity;
+import com.mcc.outify.users.entity.CertificationEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,4 +1,4 @@
-package com.mcc.outify.weathers;
+package com.mcc.outify.weathers.service;
 
 import com.mcc.outify.weathers.dto.WeatherResponseDto;
 import com.mcc.outify.weathers.entity.LocationEntity;

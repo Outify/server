@@ -1,4 +1,4 @@
-package com.mcc.outify.users;
+package com.mcc.outify.users.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

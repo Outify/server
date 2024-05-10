@@ -1,6 +1,6 @@
 package com.mcc.outify.apis;
 
-import com.mcc.outify.weathers.WeatherService;
+import com.mcc.outify.weathers.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

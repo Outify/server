@@ -32,12 +32,12 @@ public class WeatherDataRunner implements ApplicationRunner {
     private void executeAfterDelay() {
 //        locationList.readExcel();
 //        saveSources();
-//        executeWeatherOpenAPIs();
+        executeWeatherOpenAPIs();
     }
 
     @Scheduled(cron = "0 5 0 * * ?")
     public void weatherAPIScheduled() {
-//        executeWeatherOpenAPIs();
+        executeWeatherOpenAPIs();
     }
 
     private void saveSources() {

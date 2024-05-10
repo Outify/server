@@ -1,7 +1,7 @@
 package com.mcc.outify.users.jwt;
 
-import com.mcc.outify.users.Role;
-import com.mcc.outify.users.UserEntity;
+import com.mcc.outify.users.entity.Role;
+import com.mcc.outify.users.entity.UserEntity;
 import com.mcc.outify.users.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
