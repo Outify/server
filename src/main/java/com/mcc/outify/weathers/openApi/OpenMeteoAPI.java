@@ -44,7 +44,7 @@ public class OpenMeteoAPI implements WeatherAPI {
         List<LocationEntity> locationList = locationRepository.findAll();
 
 //        for (LocationEntity location : locationList) {
-        for (int loc = 0; loc < 4; loc++) {
+        for (int loc = 0; loc < 1; loc++) {
             LocationEntity location = locationList.get(loc);
 
             weatherDataRepository.deleteByLocationAndWeatherSource(location, weatherSource);
