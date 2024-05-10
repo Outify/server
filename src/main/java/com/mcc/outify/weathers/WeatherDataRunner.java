@@ -31,26 +31,25 @@ public class WeatherDataRunner implements ApplicationRunner {
 
     private void executeAfterDelay() {
 //        locationList.readExcel();
-//        saveSource();
-        executeWeatherOpenAPIs();
+//        saveSources();
+//        executeWeatherOpenAPIs();
     }
 
     @Scheduled(cron = "0 5 0 * * ?")
     public void weatherAPIScheduled() {
-        executeWeatherOpenAPIs();
+//        executeWeatherOpenAPIs();
     }
 
-    private void saveSource() {
-        WeatherSourceEntity meteoSource = weatherSourceRepository.findBySource(WeatherSourceEntity.WeatherSource.METEO);
-        if (meteoSource == null) {
-            meteoSource = new WeatherSourceEntity(WeatherSourceEntity.WeatherSource.METEO);
-            weatherSourceRepository.save(meteoSource);
-        }
+    private void saveSources() {
+        saveSource(WeatherSourceEntity.WeatherSource.METEO);
+        saveSource(WeatherSourceEntity.WeatherSource.YR);
+    }
 
-        WeatherSourceEntity yrSource = weatherSourceRepository.findBySource(WeatherSourceEntity.WeatherSource.YR);
-        if (yrSource == null) {
-            yrSource = new WeatherSourceEntity(WeatherSourceEntity.WeatherSource.YR);
-            weatherSourceRepository.save(yrSource);
+    private void saveSource(WeatherSourceEntity.WeatherSource sourceType) {
+        WeatherSourceEntity weatherSource = weatherSourceRepository.findBySource(sourceType);
+        if (weatherSource == null) {
+            weatherSource = new WeatherSourceEntity(sourceType);
+            weatherSourceRepository.save(weatherSource);
         }
     }
 
