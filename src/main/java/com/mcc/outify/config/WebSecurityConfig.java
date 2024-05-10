@@ -1,6 +1,6 @@
 package com.mcc.outify.config;
 
-import com.mcc.outify.config.jwt.JwtAuthenticationFilter;
+import com.mcc.outify.users.jwt.JwtAuthenticationFilter;
 import com.mcc.outify.handler.FailedAuthenticationEntryPoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Configurable;

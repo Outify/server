@@ -1,4 +1,4 @@
-package com.mcc.outify.config.jwt;
+package com.mcc.outify.users.jwt;
 
 import com.mcc.outify.users.Role;
 import com.mcc.outify.users.UserEntity;

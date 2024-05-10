@@ -1,4 +1,4 @@
-package com.mcc.outify.config.jwt;
+package com.mcc.outify.users.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
