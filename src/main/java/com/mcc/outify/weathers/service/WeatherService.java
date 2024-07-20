@@ -18,7 +18,9 @@ import java.util.*;
 public class WeatherService {
 
     private final LocationRepository locationRepository;
+
     private final WeatherDataRepository weatherDataRepository;
+
     private final WeatherSourceRepository weatherSourceRepository;
 
     public Map<String, Object> getLocationWeather(String addr) {
@@ -38,27 +40,25 @@ public class WeatherService {
             List<WeatherDataEntity> weatherDataList = weatherDataRepository.findAllByLocationAndWeatherSource(location, weatherSource);
             List<WeatherResponseDto> validWeatherDataList = new ArrayList<>();
 
-            for (int i = 0; i < weatherDataList.size() - 1; i++) {
+            for (int i = 0; i < weatherDataList.size(); i++) {
                 WeatherDataEntity weatherData = weatherDataList.get(i);
-                WeatherDataEntity nextWeatherData = weatherDataList.get(i + 1);
                 LocalDateTime time = weatherData.getTime();
-                LocalDateTime nextTime = nextWeatherData.getTime();
 
+                // 현재 시간 이후의 데이터만 필터링
                 if (!time.isBefore(now)) {
-                    if (nextTime.minusHours(1).isEqual(time) && time.getHour() % 3 == 0) {
-                        WeatherResponseDto responseDto = new WeatherResponseDto(weatherData, time);
-                        validWeatherDataList.add(responseDto);
-                    } else if (nextTime.minusHours(6).isEqual(time)) {
-                        for (int j = 5; j >= 0; j--) {
-                            LocalDateTime previousTime = time.minusHours(j);
-                            if (previousTime.getHour() % 3 == 0) {
-                                WeatherResponseDto responseDto = new WeatherResponseDto(weatherData, previousTime);
-                                validWeatherDataList.add(responseDto);
-                            }
+                    validWeatherDataList.add(new WeatherResponseDto(weatherData, time));
+
+                    // 6시간 간격 데이터를 3시간 간격으로 채우기
+                    if (i < weatherDataList.size() - 1) {
+                        WeatherDataEntity nextWeatherData = weatherDataList.get(i + 1);
+                        LocalDateTime nextTime = nextWeatherData.getTime();
+
+                        while (time.plusHours(3).isBefore(nextTime)) {
+                            time = time.plusHours(3);
+                            validWeatherDataList.add(new WeatherResponseDto(nextWeatherData, time));
                         }
                     }
                 }
-
             }
             resData.put(weatherSource.getSource().name(), validWeatherDataList);
         }
