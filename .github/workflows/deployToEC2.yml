@@ -25,7 +25,7 @@ jobs:
         run: ./gradlew clean build
 
       - name: 빌드 파일 이름 변경
-        run: mv ./build/libs/*SNAPSHOT.jar ./outify.jar
+        run: mv ./build/libs/*SNAPSHOT.jar ./project.jar
 
       - name: Build File EC2로 전송 (SCP)
         uses: appleboy/scp-action@v0.1.7
