@@ -38,13 +38,10 @@ jobs:
 
       - name: EC2 접속 (SSH)
         uses: appleboy/ssh-action@v1.0.3
-        env:
-          APPLICATION_PROPERTIES: ${{ secrets.APPLICATION_PROPERTIES }}
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          envs: APPLICATION_PROPERTIES
           script_stop: true
           script: |
             rm -rf /home/ubuntu/server/current
