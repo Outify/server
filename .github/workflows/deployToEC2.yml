@@ -9,6 +9,27 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Github Repository Pull
+        uses: actions/checkout@v4
+
+      - name: application.properties 생성
+        run: echo "$APPLICATION_PROPERTIES" > src/main/resources/application.properties
+
+      - name: 테스트 및 빌드
+        run: ./gradlew clean build
+
+      - name: 빌드 파일 이름 변경
+        run: mv ./build/libs/*SNAPSHOT.jar ./outify.jar
+
+      - name: Build File EC2로 전송 (SCP)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          source: outify.jar
+          target: /home/ubuntu/server/tobe
+
       - name: EC2 접속 (SSH)
         uses: appleboy/ssh-action@v1.0.3
         env:
@@ -20,10 +41,10 @@ jobs:
           envs: APPLICATION_PROPERTIES
           script_stop: true
           script: |
-            cd /home/ubuntu/server
-            rm -rf src/main/resources/application.properties
-            git pull origin main
-            echo "$APPLICATION_PROPERTIES" > src/main/resources/application.properties
-            ./gradlew clean build
+            rm -rf /home/ubuntu/server/current
+            mkdir /home/ubuntu/server/current
+            mv /home/ubuntu/server/tobe/outify.jar /home/ubuntu/server/currnet/outify.jar
+            cd /home/ubuntu/server/current
             sudo fuser -k -n tcp 8080 || true
-            nohup java -jar build/libs/*SNAPSHOT.jar > ./output.log 2>&1 &
+            nohup java -jar outify.jar > ./output.log 2>&1 &
+            rm -rf /home/ubuntu/server/tobe
