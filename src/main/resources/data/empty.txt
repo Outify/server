@@ -1,0 +1,5 @@
+Trouble Shooting && CI/CD
+
+# Error starting Tomcat context.
+Exception: org.springframework.beans.factory.UnsatisfiedDependencyException.
+Message: Error creating bean with name 'jwtAuthenticationFilter' defined in URL
