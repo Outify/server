@@ -49,6 +49,6 @@ jobs:
             mv /home/ubuntu/server/tobe/outify.jar /home/ubuntu/server/current/outify.jar
             cd /home/ubuntu/server/current
             sudo fuser -k -n tcp 8080 || true
-            nohup java -jar outify.jar > ./output.log 2>&1 &
+            nohup java -jar -Dspring.profiles.active=dev outify.jar > ./output.log 2>&1 &
             rm -rf /home/ubuntu/server/tobe
             sudo iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 8080
