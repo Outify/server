@@ -33,7 +33,7 @@ public class WeatherDataRunner implements ApplicationRunner {
         executorService.schedule(this::weatherAPIScheduled, 10, TimeUnit.SECONDS);
     }
 
-    @Scheduled(cron = "0 5 0 * * ?")
+    @Scheduled(cron = "0 5 15 * * ?")
     public void weatherAPIScheduled() {
         saveSources();
         executeWeatherJob();
