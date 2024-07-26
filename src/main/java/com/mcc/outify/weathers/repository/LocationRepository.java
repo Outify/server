@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface LocationRepository extends JpaRepository<LocationEntity, Long> {
 
-    Optional<LocationEntity> findByName(String name);
+    Optional<LocationEntity> findByLongitudeAndLatitude(Double longitude, Double latitude);
 
     LocationEntity findByHighAddrAndMidAddrAndLowAddr(String highAddr, String midAddr, String lowAddr);
 

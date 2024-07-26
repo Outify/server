@@ -11,8 +11,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -23,15 +22,11 @@ public class LocationList {
     public void readExcel(InputStream inputStream) {
 
         try {
-            locationRepository.deleteAll();
-
             ZipSecureFile.setMinInflateRatio(0);
             XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 
             XSSFSheet sheet = workbook.getSheetAt(0);
             int rows = sheet.getPhysicalNumberOfRows();
-
-            Set<String> seenLocations = new HashSet<>();
 
             for (int rowindex = 1; rowindex < rows; rowindex++) {
                 XSSFRow row = sheet.getRow(rowindex);
@@ -44,10 +39,8 @@ public class LocationList {
                     Double longitude = row.getCell(5).getNumericCellValue();
                     Double latitude = row.getCell(6).getNumericCellValue();
 
-                    String uniqueIdentifier = highAddr + "-" + midAddr + "-" + lowAddr;
-                    if (!seenLocations.contains(uniqueIdentifier.trim())) {
-                        seenLocations.add(uniqueIdentifier);
-
+                    Optional<LocationEntity> location = locationRepository.findByLongitudeAndLatitude(longitude, latitude);
+                    if (location.isEmpty()) {
                         LocationEntity newLocation = new LocationEntity(category, name, highAddr, midAddr, lowAddr, longitude, latitude);
                         locationRepository.save(newLocation);
                     }
