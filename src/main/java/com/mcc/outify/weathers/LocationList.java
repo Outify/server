@@ -11,7 +11,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import java.io.InputStream;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Component
@@ -22,6 +21,9 @@ public class LocationList {
     public void readExcel(InputStream inputStream) {
 
         try {
+
+            locationRepository.deleteAll();
+
             ZipSecureFile.setMinInflateRatio(0);
             XSSFWorkbook workbook = new XSSFWorkbook(inputStream);
 
@@ -39,11 +41,8 @@ public class LocationList {
                     Double longitude = row.getCell(5).getNumericCellValue();
                     Double latitude = row.getCell(6).getNumericCellValue();
 
-                    Optional<LocationEntity> isExistLocation = locationRepository.findByName(name);
-                    if (isExistLocation.isEmpty()) {
-                        LocationEntity newLocation = new LocationEntity(category, name, highAddr, midAddr, lowAddr, longitude, latitude);
-                        locationRepository.save(newLocation);
-                    }
+                    LocationEntity newLocation = new LocationEntity(category, name, highAddr, midAddr, lowAddr, longitude, latitude);
+                    locationRepository.save(newLocation);
                 }
             }
             workbook.close();
