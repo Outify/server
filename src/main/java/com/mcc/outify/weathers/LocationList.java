@@ -39,7 +39,10 @@ public class LocationList {
                     Double longitude = row.getCell(5).getNumericCellValue();
                     Double latitude = row.getCell(6).getNumericCellValue();
 
-                    Optional<LocationEntity> location = locationRepository.findByLongitudeAndLatitude(longitude, latitude);
+                    String strLongitude = longitude.toString();
+                    String strLatitude = latitude.toString();
+                    Optional<LocationEntity> location = locationRepository.findByLongitudeAndLatitude(strLongitude, strLatitude);
+
                     if (location.isEmpty()) {
                         LocationEntity newLocation = new LocationEntity(category, name, highAddr, midAddr, lowAddr, longitude, latitude);
                         locationRepository.save(newLocation);
