@@ -83,39 +83,44 @@ public class OpenMeteoAPI implements WeatherAPI {
         conn.disconnect();
 
         JSONParser parser = new JSONParser();
-        JSONObject obj = (JSONObject) parser.parse(sb.toString());
-        JSONObject parse_hourly = (JSONObject) obj.get("hourly");
+        try {
+            JSONObject obj = (JSONObject) parser.parse(sb.toString());
+            JSONObject parse_hourly = (JSONObject) obj.get("hourly");
 
-        JSONArray parse_time = (JSONArray) parse_hourly.get("time");
-        JSONArray temperature_2m = (JSONArray) parse_hourly.get("temperature_2m");
-        JSONArray relative_humidity_2m = (JSONArray) parse_hourly.get("relative_humidity_2m");
-        JSONArray dew_point_2m = (JSONArray) parse_hourly.get("dew_point_2m");
-        JSONArray precipitation = (JSONArray) parse_hourly.get("precipitation");
-        JSONArray weather_code = (JSONArray) parse_hourly.get("weather_code");
-        JSONArray cloud_cover = (JSONArray) parse_hourly.get("cloud_cover");
-        JSONArray wind_speed_10m = (JSONArray) parse_hourly.get("wind_speed_10m");
-        JSONArray wind_gusts_10m = (JSONArray) parse_hourly.get("wind_gusts_10m");
+            JSONArray parse_time = (JSONArray) parse_hourly.get("time");
+            JSONArray temperature_2m = (JSONArray) parse_hourly.get("temperature_2m");
+            JSONArray relative_humidity_2m = (JSONArray) parse_hourly.get("relative_humidity_2m");
+            JSONArray dew_point_2m = (JSONArray) parse_hourly.get("dew_point_2m");
+            JSONArray precipitation = (JSONArray) parse_hourly.get("precipitation");
+            JSONArray weather_code = (JSONArray) parse_hourly.get("weather_code");
+            JSONArray cloud_cover = (JSONArray) parse_hourly.get("cloud_cover");
+            JSONArray wind_speed_10m = (JSONArray) parse_hourly.get("wind_speed_10m");
+            JSONArray wind_gusts_10m = (JSONArray) parse_hourly.get("wind_gusts_10m");
 
-        for (int t = 0; t < parse_time.size(); t++) {
-            String parsedTime = (String) parse_time.get(t);
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm").withZone(ZoneId.of(timezone));
-            LocalDateTime time = LocalDateTime.parse(parsedTime, formatter);
-            if (time.getHour() % 3 != 0) {
-                continue; // 3시간 단위로 필터링
+            for (int t = 0; t < parse_time.size(); t++) {
+                String parsedTime = (String) parse_time.get(t);
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm").withZone(ZoneId.of(timezone));
+                LocalDateTime time = LocalDateTime.parse(parsedTime, formatter);
+                if (time.getHour() % 3 != 0) {
+                    continue; // 3시간 단위로 필터링
+                }
+
+                Long temp_sky = ((Number) weather_code.get(t)).longValue();
+                String sky = String.valueOf(temp_sky);
+                Double tmp = ((Number) temperature_2m.get(t)).doubleValue();
+                Double pcp = ((Number) precipitation.get(t)).doubleValue();
+                Double wsd = ((Number) wind_speed_10m.get(t)).doubleValue();
+                Double wgu = ((Number) wind_gusts_10m.get(t)).doubleValue();
+                Long temp_hum = ((Number) relative_humidity_2m.get(t)).longValue();
+                Double hum = Double.valueOf(temp_hum);
+                Double dpt = ((Number) dew_point_2m.get(t)).doubleValue();
+
+                WeatherDataEntity weatherData = new WeatherDataEntity(location, weatherSource, time, sky, tmp, pcp, wsd, wgu, hum, dpt);
+                weatherDataList.add(weatherData);
             }
-
-            Long temp_sky = ((Number) weather_code.get(t)).longValue();
-            String sky = String.valueOf(temp_sky);
-            Double tmp = ((Number) temperature_2m.get(t)).doubleValue();
-            Double pcp = ((Number) precipitation.get(t)).doubleValue();
-            Double wsd = ((Number) wind_speed_10m.get(t)).doubleValue();
-            Double wgu = ((Number) wind_gusts_10m.get(t)).doubleValue();
-            Long temp_hum = ((Number) relative_humidity_2m.get(t)).longValue();
-            Double hum = Double.valueOf(temp_hum);
-            Double dpt = ((Number) dew_point_2m.get(t)).doubleValue();
-
-            WeatherDataEntity weatherData = new WeatherDataEntity(location, weatherSource, time, sky, tmp, pcp, wsd, wgu, hum, dpt);
-            weatherDataList.add(weatherData);
+        } catch (Exception e) {
+            e.printStackTrace();
+            e.getMessage();
         }
         return weatherDataList;
     }

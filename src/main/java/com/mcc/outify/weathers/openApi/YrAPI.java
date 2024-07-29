@@ -83,39 +83,44 @@ public class YrAPI implements WeatherAPI {
         conn.disconnect();
 
         JSONParser parser = new JSONParser();
-        JSONObject obj = (JSONObject) parser.parse(sb.toString());
-        JSONObject parse_properties = (JSONObject) obj.get("properties");
-        JSONArray parse_timeseries = (JSONArray) parse_properties.get("timeseries");
-        for (Object item : parse_timeseries) {
-            JSONObject timeseriesItem = (JSONObject) item;
+        try {
+            JSONObject obj = (JSONObject) parser.parse(sb.toString());
+            JSONObject parse_properties = (JSONObject) obj.get("properties");
+            JSONArray parse_timeseries = (JSONArray) parse_properties.get("timeseries");
+            for (Object item : parse_timeseries) {
+                JSONObject timeseriesItem = (JSONObject) item;
 
-            String parsedTime = (String) timeseriesItem.get("time");
-            DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
-            LocalDateTime time = LocalDateTime.parse(parsedTime, inputFormatter).atZone(ZoneId.of(timezone)).toLocalDateTime();
-            if (time.getHour() % 3 != 0) {
-                continue; // 3시간 단위로 필터링
+                String parsedTime = (String) timeseriesItem.get("time");
+                DateTimeFormatter inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssX");
+                LocalDateTime time = LocalDateTime.parse(parsedTime, inputFormatter).atZone(ZoneId.of(timezone)).toLocalDateTime();
+                if (time.getHour() % 3 != 0) {
+                    continue; // 3시간 단위로 필터링
+                }
+                JSONObject parse_data = (JSONObject) timeseriesItem.get("data");
+                JSONObject parse_instant = (JSONObject) parse_data.get("instant");
+                JSONObject parse_details = (JSONObject) parse_instant.get("details");
+
+                Double tmp = (Double) parse_details.get("air_temperature");
+                Double wsd = (Double) parse_details.get("wind_speed");
+                Double wgu = (Double) parse_details.get("wind_speed_of_gust");
+                Double hum = (Double) parse_details.get("relative_humidity");
+                Double dpt = (Double) parse_details.get("dew_point_temperature");
+
+                JSONObject parse_nextHours = (JSONObject) parse_data.get("next_1_hours");
+                if (parse_nextHours == null) parse_nextHours = (JSONObject) parse_data.get("next_6_hours");
+                if (parse_nextHours == null) continue;
+                JSONObject parse_summary = (JSONObject) parse_nextHours.get("summary");
+                String sky = (String) parse_summary.get("symbol_code");
+
+                JSONObject parse_hourDetails = (JSONObject) parse_nextHours.get("details");
+                Double pcp = (Double) parse_hourDetails.get("precipitation_amount");
+
+                WeatherDataEntity weatherData = new WeatherDataEntity(location, weatherSource, time, sky, tmp, pcp, wsd, wgu, hum, dpt);
+                weatherDataList.add(weatherData);
             }
-            JSONObject parse_data = (JSONObject) timeseriesItem.get("data");
-            JSONObject parse_instant = (JSONObject) parse_data.get("instant");
-            JSONObject parse_details = (JSONObject) parse_instant.get("details");
-
-            Double tmp = (Double) parse_details.get("air_temperature");
-            Double wsd = (Double) parse_details.get("wind_speed");
-            Double wgu = (Double) parse_details.get("wind_speed_of_gust");
-            Double hum = (Double) parse_details.get("relative_humidity");
-            Double dpt = (Double) parse_details.get("dew_point_temperature");
-
-            JSONObject parse_nextHours = (JSONObject) parse_data.get("next_1_hours");
-            if (parse_nextHours == null) parse_nextHours = (JSONObject) parse_data.get("next_6_hours");
-            if (parse_nextHours == null) continue;
-            JSONObject parse_summary = (JSONObject) parse_nextHours.get("summary");
-            String sky = (String) parse_summary.get("symbol_code");
-
-            JSONObject parse_hourDetails = (JSONObject) parse_nextHours.get("details");
-            Double pcp = (Double) parse_hourDetails.get("precipitation_amount");
-
-            WeatherDataEntity weatherData = new WeatherDataEntity(location, weatherSource, time, sky, tmp, pcp, wsd, wgu, hum, dpt);
-            weatherDataList.add(weatherData);
+        } catch (Exception e) {
+            e.printStackTrace();
+            e.getMessage();
         }
         return weatherDataList;
     }
