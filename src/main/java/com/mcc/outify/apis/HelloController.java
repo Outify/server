@@ -8,7 +8,7 @@ public class HelloController {
 
     @GetMapping("/")
     String Hello() {
-        return "Hello, world! This is Outify from MCC";
+        return "Hello, World! This is ARLO's outify";
     }
 
     @GetMapping("/healthcheck")
