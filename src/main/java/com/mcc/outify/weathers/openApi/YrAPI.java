@@ -73,6 +73,14 @@ public class YrAPI implements WeatherAPI {
             rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
         } else {
             rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            StringBuilder errorResponse = new StringBuilder();
+            String errorLine;
+            while ((errorLine = rd.readLine()) != null) {
+                errorResponse.append(errorLine);
+            }
+            rd.close();
+            System.err.println("Error response from API: " + errorResponse);
+            throw new IOException("API returned error response: " + conn.getResponseCode());
         }
         StringBuilder sb = new StringBuilder();
         String line;

@@ -42,8 +42,11 @@ public class WeatherDataProcessor implements ItemProcessor<LocationEntity, List<
                 }
                 return allWeatherDataList;
             } catch (Exception e) {
+                retryCount--;
                 System.err.println("ParseException for location: " + location + ", error: " + e.getMessage());
-                throw e;
+                if (retryCount == 0) {
+                    throw e;
+                }
             }
         }
         return allWeatherDataList;
