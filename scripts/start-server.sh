@@ -1,4 +1,4 @@
-#!/bin/bash
+sudo chmod u+w /home/ubuntu/server
 
 echo "============ Start Server ============"
 cd /home/ubuntu/server
