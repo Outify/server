@@ -35,8 +35,8 @@ public class WeatherDataRunner implements ApplicationRunner {
 
     @Scheduled(cron = "0 5 15 * * ?")
     public void weatherAPIScheduled() {
-        saveSources();
-        executeWeatherJob();
+//        saveSources();
+//        executeWeatherJob();
     }
 
     private void saveSources() {
