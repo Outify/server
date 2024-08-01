@@ -52,7 +52,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script_stop: true
           script: |
-            docker stop outify-server || ture
+            docker stop outify-server || true
             docker rm outify-server || true
             docker pull ${{ steps.login-ecr.outputs.registry }}/outify-server:latest
             docker run -d --name outify-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/outify-server:latest
