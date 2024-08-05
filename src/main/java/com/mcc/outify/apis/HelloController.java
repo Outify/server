@@ -1,18 +1,15 @@
 package com.mcc.outify.apis;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 public class HelloController {
 
     @GetMapping("/")
-    String Hello() {
-        return "Hello, World! This is ARLO's outify";
-    }
-
-    @GetMapping("/healthcheck")
-    public String healthcheck() {
-        return "OK";
+    String Hello(Model model) {
+        model.addAttribute("message", "Hello, World! This is ARLO's outify");
+        return "index";
     }
 }
