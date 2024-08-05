@@ -48,7 +48,7 @@ jobs:
         run: tar -czvf $GITHUB_SHA.tar.gz appspec.yml scripts
 
       - name: Uploading a Project Folder to S3
-        run: aws s3 cp --region ap-northeast-2 ./$GITHUB.SHA.tar.gz s3://outify-server/$GITHUB_SHA.tar.gz
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.tar.gz s3://outify-server/$GITHUB_SHA.tar.gz
 
       - name: Use CodeDeploy to distribute project code to EC2
         run: aws deploy create-deployment
