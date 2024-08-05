@@ -44,15 +44,15 @@ jobs:
       - name: Push Docker Image to ECR
         run: docker push ${{ steps.login-ecr.outputs.registry }}/outify-server:latest
 
-      - name: Connecting to EC2 with SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USERNAME }}
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script_stop: true
-          script: |
-            docker stop outify-server || true
-            docker rm outify-server || true
-            docker pull ${{ steps.login-ecr.outputs.registry }}/outify-server:latest
-            docker run -d --name outify-server -p 8080:8080 ${{ steps.login-ecr.outputs.registry }}/outify-server:latest
+      - name: Compressing
+        run: tar -czvf $GITHUB_SHA.tar.gz appspec.yml scripts
+
+      - name: Uploading a Project Folder to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB.SHA.tar.gz s3://outify-server/$GITHUB_SHA.tar.gz
+
+      - name: Use CodeDeploy to distribute project code to EC2
+        run: aws deploy create-deployment
+          --application-name outify-server
+          --deployment-group-name Production
+          --deployment-config-name CodeDeployDefault.AllAtOnce
+          --s3-location bucket=instagram-server,bundleType=tgz,key=$GITHUB_SHA.tar.gz
